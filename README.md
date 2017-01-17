@@ -3,7 +3,7 @@
 ## Install
 
 ```bash
-npm install hyper-api-client
+npm install hyper-api-client --save
 ```
 
 ## Usage
