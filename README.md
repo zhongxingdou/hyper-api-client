@@ -54,6 +54,7 @@ let findUserSchema = {
 
 APIClient.addSchema(findUserSchema)
 
-let user = APIClient.findUser.send({name: 'hal.zhong'})
-console.info(user.name)
+APIClient.findUser.send({name: 'hal.zhong'}).then(user => {
+  console.info(user.name)
+})
 ```
