@@ -30,6 +30,7 @@ initAPIClient()
 let findUserSchema = {
   href: 'http://domain.com/api',
   title: 'findUser',
+  method: 'post',
   description: 'Find user by name',
   definitions: {
     name: {
@@ -40,13 +41,15 @@ let findUserSchema = {
     }
   },
   schema: {
-    name: {
-      type: 'string'
+    properties: {
+      name: {
+        type: 'string'
+      }
     }
   },
   targetSchema: {
     properties: {
-      name: '#/definitions/name'
+      name: '#/definitions/name',
       age: '#/definitions/age'
     }
   }

@@ -16,6 +16,8 @@ describe('hyper-api-client', () => {
     return {
       then: function (succeedCb) {
         succeedCb()
+      },
+      catch: function () {
       }
     }
   }
@@ -30,6 +32,11 @@ describe('hyper-api-client', () => {
     return {
       then: function (succeedCb) {
         succeedCb(response)
+        return {
+          catch () {}
+        }
+      },
+      catch: function () {
       }
     }
   }
