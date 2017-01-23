@@ -49,8 +49,12 @@ let findUserSchema = {
   },
   targetSchema: {
     properties: {
-      name: '#/definitions/name',
-      age: '#/definitions/age'
+      name: {
+        $ref: '#/definitions/name',
+      },
+      age: {
+        $ref: '#/definitions/age'      
+      }
     }
   }
 }
