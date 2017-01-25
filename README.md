@@ -14,18 +14,23 @@ import Ajv from 'ajv'
 import 'whatwg-fetch'
 
 function initAPIClient() {
-  let ajv = new Ajv()
-  APIClient.compile = ajv.compile.bind(ajv)
+  APIClient.compiler = function () {
+    return new Ajv()
+  }
 
-  APIClient.request = function ({method, url, data}) {
+  var doRequest = function ({method, url, data}) {
     return fetch(url, {
       method,
       body: JSON.stringify(data)
     })
   }
+
+  return APIClient.createClient({
+    doRequest: doRequest
+  })
 }
 
-initAPIClient()
+let Client = initAPIClient()
 
 let findUserSchema = {
   href: 'http://domain.com/api',
@@ -59,9 +64,9 @@ let findUserSchema = {
   }
 }
 
-APIClient.addSchema(findUserSchema)
+Client.addSchema(findUserSchema)
 
-APIClient.findUser.send({name: 'hal.zhong'}).then(user => {
+Client.findUser.send({name: 'hal.zhong'}).then(user => {
   console.info(user.name)
 })
 ```
