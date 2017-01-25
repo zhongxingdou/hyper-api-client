@@ -2,15 +2,11 @@ import sinon from 'sinon'
 import chai from 'chai'
 let assert = chai.assert
 
-import Client from '../'
+import HyperApiClient from '../'
 
 describe('hyper-api-client', () => {
   const ACTION_NAME = 'getUserByName'
-  let action, schema, response
-
-  function setResponse (val) {
-    response = val
-  }
+  let action, schema, response, addSchema, Client
 
   let validate = function () {
     return {
@@ -23,10 +19,18 @@ describe('hyper-api-client', () => {
   }
   validate = sinon.spy(validate)
 
-  let compile = function () {
-    return validate
+  addSchema = sinon.spy()
+
+  let compiler = function () {
+    return {
+      addSchema,
+      validate
+    }
   }
-  Client.compile = compile
+
+  function setResponse (val) {
+    response = val
+  }
 
   let request = function () {
     return {
@@ -40,9 +44,13 @@ describe('hyper-api-client', () => {
       }
     }
   }
+
   request = sinon.spy(request)
 
-  Client.request = request
+  Client = HyperApiClient.createClient({
+    doRequest: request
+  })
+  HyperApiClient.compiler = compiler
 
   before(function () {
     schema = {
@@ -123,7 +131,7 @@ describe('hyper-api-client', () => {
 
       assert.throws(function () {
         Client[ACTION_NAME] = null
-      }, 'Cannot assign to read only property \'' + ACTION_NAME + '\' of object \'#<Object>\'')
+      }, 'Cannot assign to read only property \'' + ACTION_NAME + '\' of object \'#<Client>\'')
     })
 
     it('should getDefaultParameters() normal', () => {
@@ -145,7 +153,7 @@ describe('hyper-api-client', () => {
   })
 
   describe('validate', () => {
-    it('should validateParameters(val) normal', () => {
+    it('should validateParameters(val) with whole parameter normal', () => {
       let parameters = {
         user: {
           name: 'hal.zhong'
@@ -154,16 +162,16 @@ describe('hyper-api-client', () => {
 
       action.validateParameters(parameters)
 
-      sinon.assert.calledWith(validate, parameters)
+      sinon.assert.calledWithMatch(validate, schema.href + '#/schema', parameters)
     })
 
-    it('should validateParameters(path, value) normal', () => {
+    it('should validateParameters(ref, value) with member of parameter normal', () => {
       let path =  '.user.name'
       let name = 'hal.zhong'
 
       action.validateParameters(path, name)
 
-      let ref = schema.href + '/parameters#/properties/user/properties/name'
+      let ref = schema.href + '#/schema/properties/user/properties/name'
       sinon.assert.calledWith(validate, ref, name)
     })
   })
@@ -182,8 +190,8 @@ describe('hyper-api-client', () => {
         data: parameters
       })
 
-      sinon.assert.calledWith(validate, parameters)
-      sinon.assert.calledWith(validate, res)
+      sinon.assert.calledWith(validate, schema.href + '#/schema', parameters)
+      sinon.assert.calledWith(validate, schema.href + '#/targetSchema', res)
     })
   })
 })
