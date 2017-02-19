@@ -169,7 +169,7 @@ describe('hyper-api-client', () => {
       let path =  '.user.name'
       let name = 'hal.zhong'
 
-      action.validateParameters(path, name)
+      action.validateParameters(name, path)
 
       let ref = schema.href + '#/schema/properties/user/properties/name'
       sinon.assert.calledWith(validate, ref, name)
