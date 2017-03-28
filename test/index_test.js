@@ -27,6 +27,7 @@ describe('hyper-api-client', () => {
       validate
     }
   }
+  HyperApiClient.compiler = compiler
 
   function setResponse (val) {
     response = val
@@ -50,7 +51,6 @@ describe('hyper-api-client', () => {
   Client = HyperApiClient.createClient({
     doRequest: request
   })
-  HyperApiClient.compiler = compiler
 
   before(function () {
     schema = {
