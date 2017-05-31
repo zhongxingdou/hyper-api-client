@@ -97,6 +97,15 @@ if (top !== window) {
 }
 ```
 
+#### vue-modello plugin Option
+| OptionName                     | Type     | Example.  | Description |
+|--------------------------------|----------|-----------|-------------|
+| client                         | Object   |           |             |
+| suppressResultInvalidError     | Boolean  | true      |             |
+| suppressParametersInvalidError | Boolean  | false     |             |
+| onResultInvalid                | Function | fn(error) |             |
+| onParametersInvalid            | Function | fn(error) |             |
+
 ### vue modello hyper api plugin mix option
 
 | Property                    | Priority | Type     | Default | Example               | Description                   |
