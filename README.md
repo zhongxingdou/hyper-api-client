@@ -101,7 +101,7 @@ if (top !== window) {
 
 | Property                    | Priority | Type     | Default | Example               | Description                   |
 | --------------------------- | -------- | -------- | ------- | --------------------- | ----------------------------- |
-| parameter                   |          | Object|String   | {}      |                       |                               | 'parameterPath' 等价于 { valuePath: 'parameterPath' }
+| parameter                   |          | Object 或 String   | {}      |                       |  'parameterPath' 等价于 { valuePath: 'parameterPath' }                              |
 | parameter.valuePath         |          | String   |         | 'query'               |  请求参数在 state 中的 path，将根据它自动设置参数的其他选项                               |
 | parameter.set               | +        | Function |         | fn(state, value)                       |提供一个函数设置参数的值，用于将 schema 中的默认值复制给参数             |
 | parameter.get               | +        | Function |         | fn(state)                  | 提供一个函数从 state 中获取参数，仅用于发起请求时未传递参数 |
@@ -109,11 +109,11 @@ if (top !== window) {
 | parameter.validateErrorPath |          | String   |         | 'validateError.query' | 参数校验错误的保存到 state 的 path |
 | parameter.setValidateError  | +        | Function |         | fn(state, error, propPath) | 提供一个函数保存参数校验错误   |
 | parameter.copyDefault       |          | Boolean  |         |                       | Be true if valuePath present  是否 copy schema 中的默认值到参数 |
-| result                      |          | Object   | {}      |                       |                               |
-| result.valuePath            |          | String   |         | 'list'                |                               |
-| result.set                  | +        | Function |         |                       | fn(state, value)              |
-| result.filter               |          | Function |         |                       | filter result                 |
-| result.copyDefault          |          | Boolean  |         |                       | Be true if valuePath present  |
+| result                      |          | Object 或 String  | {}      |                       |                               |
+| result.valuePath            |          | String   |         | 'list'                | 保存结果到 state 的 path                               |
+| result.set                  | +        | Function |         |  fn(state, value)                        | 用于保存响应结果到 state          |
+| result.filter               |          | Function |         | fn (result )                      | filter result 用于通过校验后过滤响应结果 |
+| result.copyDefault          |          | Boolean  |         |                       | Be true if valuePath present 是否复制默认值到响应结果 |
 
 ### Add api to model
 ```js
