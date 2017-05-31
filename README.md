@@ -98,11 +98,11 @@ if (top !== window) {
 ```
 
 #### vue-modello plugin Option
-| OptionName                     | Type     | Example.  | Description |
+| OptionName                     | Type     | Example   | Description |
 |--------------------------------|----------|-----------|-------------|
-| client                         | Object   |           |             |
-| suppressResultInvalidError     | Boolean  | true      |             |
-| suppressParametersInvalidError | Boolean  | false     |             |
+| client                         | Object   |           | HyperApiClient instance            |
+| suppressResultInvalidError     | Boolean  | true      | 默认值为 false，为 true 时将不会在响应结果校验出错时抛出错误 |
+| suppressParametersInvalidError | Boolean  | false     | 默认值为 false，为 true 时将不会在请求参数校验出错时抛出错误 |
 | onResultInvalid                | Function | fn(error) |             |
 | onParametersInvalid            | Function | fn(error) |             |
 
