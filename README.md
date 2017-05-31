@@ -109,10 +109,10 @@ if (top !== window) {
 | parameter.validateErrorPath |          | String   |         | 'validateError.query' | 参数校验错误的保存到 state 的 path |
 | parameter.setValidateError  | +        | Function |         | fn(state, error, propPath) | 提供一个函数保存参数校验错误   |
 | parameter.copyDefault       |          | Boolean  |         |                       | Be true if valuePath present  是否 copy schema 中的默认值到参数 |
-| result                      |          | Object 或 String  | {}      |                       |                               |
+| result                      |          | Object 或 String  | {}      |                       | 'resultPath' 等价于 { valuePath: 'resultPath'}                            |
 | result.valuePath            |          | String   |         | 'list'                | 保存结果到 state 的 path                               |
 | result.set                  | +        | Function |         |  fn(state, value)                        | 用于保存响应结果到 state          |
-| result.filter               |          | Function |         | fn (result )                      | filter result 用于通过校验后过滤响应结果 |
+| result.filter               |          | Function |         | fn(result)                      | filter result 用于通过校验后过滤响应结果 |
 | result.copyDefault          |          | Boolean  |         |                       | Be true if valuePath present 是否复制默认值到响应结果 |
 
 ### Add api to model
