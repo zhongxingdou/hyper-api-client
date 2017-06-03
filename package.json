@@ -1,6 +1,6 @@
 {
   "name": "hyper-api-client",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "A hyper-schema API client",
   "main": "dist/hyper-api-client.js",
   "module": "dist/hyper-api-client.mjs",
