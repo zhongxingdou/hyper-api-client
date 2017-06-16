@@ -8,16 +8,26 @@ describe('hyper-api-client', () => {
   const ACTION_NAME = 'getUserByName'
   let action, schema, response, addSchema, Client
 
-  let validate = function () {
-    return {
-      then: function (succeedCb) {
-        succeedCb()
-      },
-      catch: function () {
+  let validate = function (path, target) {
+    return new Promise (function (resolve, reject) {
+      if (target === invalidParams) {
+        reject(parametersError)
       }
-    }
+
+      if (target === invalidResult) {
+        reject(resultError)
+      }
+
+      resolve()
+    })
   }
+
   validate = sinon.spy(validate)
+
+  let invalidParams = {}
+  let invalidResult = {}
+  let parametersError = {}
+  let resultError = {}
 
   addSchema = sinon.spy()
 
@@ -34,16 +44,9 @@ describe('hyper-api-client', () => {
   }
 
   let request = function () {
-    return {
-      then: function (succeedCb) {
-        succeedCb(response)
-        return {
-          catch () {}
-        }
-      },
-      catch: function () {
-      }
-    }
+    return  new Promise (function (resolve) {
+      resolve(response)
+    })
   }
 
   request = sinon.spy(request)
@@ -110,6 +113,7 @@ describe('hyper-api-client', () => {
 
   afterEach(function () {
     validate.reset()
+    request.reset()
   })
 
   describe('addSchema(hyperSchema)', () => {
@@ -176,22 +180,96 @@ describe('hyper-api-client', () => {
     })
   })
 
-  describe('send request', () => {
-    it ('send() normal', () => {
+  describe('send() request', () => {
+    it ('normal', (done) => {
       let parameters = {user: {name: 'hal.zhong'}}
       let res = {code: 200}
       setResponse(res)
 
-      action.send(parameters)
+      action.send(parameters).then(() => {
+        sinon.assert.calledWithMatch(request, {
+          url: schema.href,
+          method: schema.method,
+          data: parameters
+        })
 
-      sinon.assert.calledWithMatch(request, {
-        url: schema.href,
-        method: schema.method,
-        data: parameters
+        sinon.assert.calledWith(validate, schema.href + '#/schema', parameters)
+        sinon.assert.calledWith(validate, schema.href + '#/targetSchema', res)
+        done()
+      })
+    })
+
+    it('with option.disableParameterValidate', (done) => {
+       let parameters = {user: {name: false}}
+      let res = {code: 200}
+      setResponse(res)
+
+      action.send(parameters, {
+        disableParameterValidate: true
+      }).then(() => {
+        sinon.assert.calledWith(validate, schema.href + '#/targetSchema', res)
+        sinon.assert.calledOnce(validate)
+        done()
+      })
+    })
+
+    it('with option.disableResultValidate', () => {
+      let parameters = {user: {name: 'hal.zhong'}}
+      let res = {code: 200}
+      setResponse(res)
+
+      action.send(parameters, {
+        disableResultValidate: true
       })
 
       sinon.assert.calledWith(validate, schema.href + '#/schema', parameters)
-      sinon.assert.calledWith(validate, schema.href + '#/targetSchema', res)
+      sinon.assert.calledOnce(validate)
+    })
+
+    it('with option.suppressParametersInvalidError', (done) => {
+      let res = {code: 200}
+      setResponse(res)
+
+      action.send(invalidParams, {
+        suppressParametersInvalidError: true
+      }).then((result) => {
+        assert.equal(result, res)
+        done()
+      })
+    })
+
+    it('with option.suppressResultInvalidError', (done) => {
+      let parameters = {user: {name: 'hal.zhong'}}
+      let res = invalidResult
+      setResponse(res)
+
+      action.send(parameters, {
+        suppressResultInvalidError: true
+      }).then((result) => {
+        assert.equal(result, res)
+        done()
+      })
+    })
+
+    it('throw error if parameters invalid', (done) => {
+      let res = {code: 200}
+      setResponse(res)
+
+      action.send(invalidParams).then(function() {}, (error) => {
+        assert.equal(error.error, parametersError)
+        done()
+      })
+    })
+
+    it('throw error if result invalid', (done) => {
+      let parameters = {user: {name: 'hal.zhong'}}
+      let res = invalidResult
+      setResponse(res)
+
+      action.send(parameters).then(function() {}, (error) => {
+        assert.equal(error.error, resultError)
+        done()
+      })
     })
   })
 })

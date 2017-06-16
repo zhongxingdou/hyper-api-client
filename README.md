@@ -101,10 +101,11 @@ if (top !== window) {
 | OptionName                     | Type     | Example   | Description |
 |--------------------------------|----------|-----------|-------------|
 | client                         | Object   |           | HyperApiClient instance            |
-| suppressResultInvalidError     | Boolean  | true      | 默认值为 false，为 true 时将不会在响应结果校验出错时抛出错误 |
+| disableResultValidate          | Boolean  | false     | 默认值为 false，为 true 时将不校验响应结果 |
+| suppressResultInvalidError     | Boolean  | false     | 默认值为 false，为 true 时将不会在响应结果校验出错时抛出错误 |
+| disableParametersValidate      | Boolean  | false     | 默认值为 false，为 true 时将不校验请求参数 |
 | suppressParametersInvalidError | Boolean  | false     | 默认值为 false，为 true 时将不会在请求参数校验出错时抛出错误 |
-| onResultInvalid                | Function | fn(error) |             |
-| onParametersInvalid            | Function | fn(error) |             |
+| onError                        | Function | fn(error) |             |
 
 ### vue modello hyper api plugin mix option
 
