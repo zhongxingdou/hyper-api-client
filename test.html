@@ -1,0 +1,142 @@
+<html>
+  <head>
+    <title>Test</title>
+    <script>
+    function jsonPointerToRef (pointer) {
+      return pointer.replace(/\//g, '/properties/')
+    }
+
+    function jsonPointerToObjPath (pointer) {
+      return pointer.replace(/\//g, '.')
+    }
+
+    function refToObjectPath (ref) {
+      return ref.replace(/\/properties\//g, '.')
+    }
+
+    function addDepends (map, ref, dependsOnPointer) {
+      let dependsOnRef = jsonPointerToRef(dependsOnPointer)
+      let dependsOnPath = jsonPointerToObjPath(dependsOnPointer)
+      let refPath = refToObjectPath(ref)
+
+      if (!map[ref]) {
+        map[ref] = {
+          dependsOn: [],
+          beDependend: []
+        }
+      }
+      map[ref].dependsOn.push(dependsOnPath)
+
+      if (!map[dependsOnRef]) {
+        map[dependsOnRef] = {
+          dependsOn: [],
+          beDependend: []
+        }
+      }
+      map[dependsOnRef].beDependend.push(refPath)
+    }
+
+    function collectArrayDepends (array, ref, map) {
+      array.forEach(val => {
+        if (Array.isArray(val)) {
+          collectArrayDepends(val, ref, map)
+        } else if (typeof val === 'object') {
+          collectObjectDepends(val, ref, map)
+        }
+      })
+    }
+
+    function collectObjectDepends (obj, ref, map) {
+      for (let prop in obj) {
+        let val = obj[prop]
+
+        if (!val) continue
+
+        if (prop === '$data') {
+          addDepends(map, ref, val)
+          continue
+        }
+
+        if (Array.isArray(val)) {
+          collectArrayDepends(val, ref, map)
+        } else if (typeof val === 'object') {
+          collectObjectDepends(val, ref, map)
+        }
+      }
+    }
+
+    function collectDepends (schema, baseRef, dependsMap={}) {
+      let props = schema.properties
+
+      baseRef += '/properties'
+
+      for(let prop in props) {
+        let ref = baseRef + '/' + prop
+        let option = props[prop]
+
+        for(let key in option) {
+          let val = option[key]
+
+          if (!val) continue
+
+          if (key === 'properties') {
+            collectDepends(option, ref, dependsMap)
+            continue
+          }
+
+          if (Array.isArray(val)) {
+            collectArrayDepends(val, ref, dependsMap)
+          } else if (typeof val === 'object') {
+            if (val.$data) {
+              addDepends(dependsMap, ref, val.$data)
+            } else {
+              collectObjectDepends(val, ref, dependsMap)
+            }
+          }
+        }
+      }
+
+      return dependsMap
+    }
+    </script>
+    <script>
+      let schema = {
+        properties: {
+          begin: {
+            format: 'date'
+          },
+          end: {
+            format: 'date',
+            formatMaximum: {
+              $data: '/begin'
+            }
+          },
+          name: {
+            type: 'string'
+          },
+          age: {
+            type: 'number',
+          },
+          total: {
+            type: 'number'
+          },
+          score: {
+            properties: {
+              english: {
+                type: 'number',
+                minimum: {
+                  $data: '/total'
+                }
+              }
+            }
+          }
+        }
+      }
+
+      let map = collectDepends(schema, '')
+      console.dir(map)
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
